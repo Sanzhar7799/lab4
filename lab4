@@ -1,0 +1,92 @@
+#include <iostream>
+
+// Задание 1: Шаблон функции поиска второго максимума в массиве
+template<typename T>
+int find_second_max(T* arr, int size) {
+    if (size < 2) {
+        return -1; // Возвращаем -1 в случае, если массив содержит меньше 2 элементов
+    }
+
+    int maxIndex = 0; // Индекс максимального элемента
+    int secondMaxIndex = -1; // Индекс второго по величине элемента
+
+    // Находим индекс максимального элемента в массиве
+    for (int i = 1; i < size; i++) {
+        if (arr[i] > arr[maxIndex]) {
+            secondMaxIndex = maxIndex;
+            maxIndex = i;
+        } else if (secondMaxIndex == -1 || arr[i] > arr[secondMaxIndex]) {
+            if (arr[i] < arr[maxIndex]) {
+                secondMaxIndex = i;
+            }
+        }
+    }
+
+    return secondMaxIndex;
+}
+
+// Задание 2: Переработанный шаблон класса Matrix
+template<typename T>
+class Matrix {
+private:
+    std::vector<std::vector<T>> data;
+    unsigned int m;
+    unsigned int n;
+
+public:
+    Matrix(unsigned int rows, unsigned int cols) : m(rows), n(cols) {
+        data.resize(m, std::vector<T>(n, 0));
+    }
+
+    // Далее идет реализация методов и перегрузка операторов, аналогичная предыдущему примеру
+};
+
+// Задание 3: Шаблон класса Vector на основе переработанного класса Matrix
+template<typename T>
+class Vector : public Matrix<T> {
+public:
+    Vector(unsigned int cols) : Matrix<T>(1, cols) {}
+
+    T dotProduct(Vector<T>& other) {
+        T result = 0;
+        for (unsigned int i = 0; i < this->n; i++) {
+            result += this->data[0][i] * other.data[0][i];
+        }
+        return result;
+    }
+
+    T scalarProduct(T scalar) {
+        for (unsigned int i = 0; i < this->n; i++) {
+            this->data[0][i] *= scalar;
+        }
+    }
+};
+
+int main() {
+    // Пример использования для задания 1
+    int intArr[] = {5, 2, 8, 1, 9};
+    int size = sizeof(intArr) / sizeof(intArr[0]);
+    int secondMaxIndex = find_second_max(intArr, size);
+    std::cout << "Index of the second maximum element: " << secondMaxIndex << std::endl;
+
+    // Пример использования для задания 2 и 3
+    Vector<float> vec1(3);
+    Vector<float> vec2(3);
+
+    // Заполнение векторов
+    vec1(0, 0) = 1.0f;
+    vec1(0, 1) = 2.0f;
+    vec1(0, 2) = 3.0f;
+
+    vec2(0, 0) = 4.0f;
+    vec2(0, 1) = 5.0f;
+    vec2(0, 2) = 6.0f;
+
+    // Вычисление векторного и скалярного произведения
+    float dot = vec1.dotProduct(vec2);
+    std::cout << "Dot product: " << dot << std::endl;
+
+    vec1.scalarProduct(2.0f);
+
+    return 0;
+}
